@@ -4,34 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reset Your Password - Invays</title>
+
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
   import { getAuth, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
 
+  // 🔑 Replace these with your Firebase project settings
   const firebaseConfig = {
     apiKey: "AIzaSyBylUVBalIo916IFWLfbfIUQb9EhY41pSs",
     authDomain: "inventorymanagement-e5c92.firebaseapp.com",
     projectId: "inventorymanagement-e5c92"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
   window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const oobCode = urlParams.get('oobCode');
+    const oobCode = urlParams.get('oobCode'); // automatically provided by Firebase
 
     const messageBox = document.getElementById('message');
+    const form = document.getElementById('reset-form');
+
     if (!oobCode) {
       messageBox.textContent = "Invalid or expired reset link.";
       messageBox.style.color = "red";
+      form.style.display = "none"; // hide the form if no code
       return;
     }
 
-    const form = document.getElementById('reset-form');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       messageBox.textContent = "";
+
       const password = document.getElementById('new-password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
 
@@ -41,12 +47,20 @@
         return;
       }
 
+      if (password.length < 6) {
+        messageBox.textContent = "Password must be at least 6 characters.";
+        messageBox.style.color = "red";
+        return;
+      }
+
       try {
         await confirmPasswordReset(auth, oobCode, password);
         messageBox.textContent = "Password reset successful! Redirecting to login...";
         messageBox.style.color = "green";
+
         setTimeout(() => {
-          window.location.href = "/login";
+          // Update this to your login page URL if you have one
+          window.location.href = "https://vrutik11.github.io/invays-login/";
         }, 2500);
       } catch (error) {
         console.error(error);
@@ -106,7 +120,7 @@
 <body>
 
 <div class="container">
- <img src="https://raw.githubusercontent.com/vrutik11/invays-reset/main/ic_logo.png" alt="Invays Logo" class="logo">
+  <img src="https://raw.githubusercontent.com/vrutik11/invays-reset/main/ic_logo.png" alt="Invays Logo" class="logo">
   <h2>Reset Your Password</h2>
   <p>Enter your new password below to secure your account.</p>
   <form id="reset-form">
@@ -120,5 +134,3 @@
 
 </body>
 </html>
-
-
