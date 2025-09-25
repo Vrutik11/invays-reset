@@ -10,7 +10,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
   import { getAuth, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
 
-  // 🔑 Replace these with your Firebase project settings
+  // 🔑 Replace with your Firebase project config
   const firebaseConfig = {
     apiKey: "AIzaSyBylUVBalIo916IFWLfbfIUQb9EhY41pSs",
     authDomain: "inventorymanagement-e5c92.firebaseapp.com",
@@ -22,22 +22,22 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const oobCode = urlParams.get('oobCode'); // automatically provided by Firebase
-
+    const oobCode = urlParams.get('oobCode');
     const messageBox = document.getElementById('message');
     const form = document.getElementById('reset-form');
 
+    // Hide form if oobCode missing
     if (!oobCode) {
-      messageBox.textContent = "Invalid or expired reset link.";
+      messageBox.textContent = "Invalid or expired reset link. Please use the link from your email.";
       messageBox.style.color = "red";
-      form.style.display = "none"; // hide the form if no code
+      form.style.display = "none";
       return;
     }
 
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      messageBox.textContent = "";
+      e.preventDefault(); // Prevent page refresh
 
+      messageBox.textContent = "";
       const password = document.getElementById('new-password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
 
@@ -59,7 +59,7 @@
         messageBox.style.color = "green";
 
         setTimeout(() => {
-          // Update this to your login page URL if you have one
+          // Replace with your login page URL
           window.location.href = "https://vrutik11.github.io/invays-login/";
         }, 2500);
       } catch (error) {
