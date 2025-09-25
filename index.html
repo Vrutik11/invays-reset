@@ -5,72 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reset Your Password - Invays</title>
 
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
-  import { getAuth, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
-
-  // 🔑 Replace with your Firebase project config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBylUVBalIo916IFWLfbfIUQb9EhY41pSs",
-    authDomain: "inventorymanagement-e5c92.firebaseapp.com",
-    projectId: "inventorymanagement-e5c92"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const oobCode = urlParams.get('oobCode');
-    const messageBox = document.getElementById('message');
-    const form = document.getElementById('reset-form');
-
-    // Hide form if oobCode missing
-    if (!oobCode) {
-      messageBox.textContent = "Invalid or expired reset link. Please use the link from your email.";
-      messageBox.style.color = "red";
-      form.style.display = "none";
-      return;
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Prevent page refresh
-
-      messageBox.textContent = "";
-      const password = document.getElementById('new-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-
-      if (password !== confirmPassword) {
-        messageBox.textContent = "Passwords do not match!";
-        messageBox.style.color = "red";
-        return;
-      }
-
-      if (password.length < 6) {
-        messageBox.textContent = "Password must be at least 6 characters.";
-        messageBox.style.color = "red";
-        return;
-      }
-
-      try {
-        await confirmPasswordReset(auth, oobCode, password);
-        messageBox.textContent = "Password reset successful! Redirecting to login...";
-        messageBox.style.color = "green";
-
-        setTimeout(() => {
-          // Replace with your login page URL
-          window.location.href = "https://vrutik11.github.io/invays-login/";
-        }, 2500);
-      } catch (error) {
-        console.error(error);
-        messageBox.textContent = error.message;
-        messageBox.style.color = "red";
-      }
-    });
-  });
-</script>
-
 <style>
   body {
     margin:0; padding:0;
@@ -116,6 +50,7 @@
     button { font-size:15px; }
   }
 </style>
+
 </head>
 <body>
 
@@ -131,6 +66,76 @@
   <div id="message"></div>
   <p class="footer">Powered by Invays &copy; 2025</p>
 </div>
+
+<!-- Firebase SDK + JS -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
+  import { getAuth, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
+
+  // 🔑 Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBylUVBalIo916IFWLfbfIUQb9EhY41pSs",
+    authDomain: "inventorymanagement-e5c92.firebaseapp.com",
+    projectId: "inventorymanagement-e5c92"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    console.log("Reset page loaded"); // debug
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const oobCode = urlParams.get('oobCode');
+    const messageBox = document.getElementById('message');
+    const form = document.getElementById('reset-form');
+
+    // Hide form if no code
+    if (!oobCode) {
+      messageBox.textContent = "Invalid or expired reset link. Please use the link from your email.";
+      messageBox.style.color = "red";
+      form.style.display = "none";
+      return;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // prevent refresh
+      console.log("Form submitted"); // debug
+
+      messageBox.textContent = "";
+
+      const password = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      if (password !== confirmPassword) {
+        messageBox.textContent = "Passwords do not match!";
+        messageBox.style.color = "red";
+        return;
+      }
+
+      if (password.length < 6) {
+        messageBox.textContent = "Password must be at least 6 characters.";
+        messageBox.style.color = "red";
+        return;
+      }
+
+      try {
+        await confirmPasswordReset(auth, oobCode, password);
+        messageBox.textContent = "Password reset successful! Redirecting to login...";
+        messageBox.style.color = "green";
+
+        setTimeout(() => {
+          // replace with your login page URL
+          window.location.href = "https://vrutik11.github.io/invays-login/";
+        }, 2500);
+      } catch (error) {
+        console.error(error);
+        messageBox.textContent = error.message;
+        messageBox.style.color = "red";
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
