@@ -43,6 +43,32 @@
   button:hover { background:#0056b3; transform: translateY(-1px); }
   #message { margin-top:15px; font-size:14px; min-height:20px; }
   .footer { font-size:12px; color:#999; margin-top:25px; }
+
+  /* ✅ Success Card */
+  .success-card {
+    display: none;
+    text-align: center;
+    padding: 20px;
+  }
+  .success-check {
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:#28a745;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:0 auto 15px;
+    animation: pop 0.5s ease forwards;
+  }
+  .success-check svg {
+    width:35px; height:35px; stroke:#fff; stroke-width:3; fill:none;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
   @media(max-width:480px){
     .container { padding:30px 20px; }
     h2 { font-size:20px; }
@@ -57,18 +83,34 @@
   <img src="https://raw.githubusercontent.com/vrutik11/invays-reset/main/ic_logo.png" alt="Invays Logo" class="logo">
   <h2>Reset Your Password</h2>
   <p>Enter your new password below to secure your account.</p>
+
+  <!-- Reset form -->
   <form id="reset-form">
     <input type="password" id="new-password" placeholder="New Password" required>
     <input type="password" id="confirm-password" placeholder="Confirm Password" required>
     <button type="submit">Reset Password</button>
   </form>
+
+  <!-- Message placeholder -->
   <div id="message"></div>
+
+  <!-- ✅ Success card (hidden until success) -->
+  <div class="success-card" id="success-card">
+    <div class="success-check">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+    <h2>Password Changed</h2>
+    <p>Your password has been successfully updated. You can now log in with your new credentials.</p>
+  </div>
+
   <p class="footer">Powered by Invays &copy; 2025</p>
 </div>
 
-<!-- ✅ Firebase v9 compat SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
   // 🔑 Firebase config
@@ -87,6 +129,7 @@
     const oobCode = urlParams.get('oobCode');
     const messageBox = document.getElementById('message');
     const form = document.getElementById('reset-form');
+    const successCard = document.getElementById('success-card');
 
     if (!oobCode) {
       messageBox.textContent = "Invalid or expired reset link. Please use the link from your email.";
@@ -113,13 +156,13 @@
         return;
       }
 
+      // ✅ Confirm password reset
       auth.confirmPasswordReset(oobCode, password)
         .then(() => {
-          messageBox.textContent = "Password reset successful! Redirecting to login...";
-          messageBox.style.color = "green";
-          setTimeout(() => {
-            window.location.href = "https://vrutik11.github.io/invays-login/";
-          }, 2500);
+          form.reset();
+          form.style.display = "none";
+          messageBox.style.display = "none";
+          successCard.style.display = "block"; // show success card
         })
         .catch((error) => {
           console.error(error);
