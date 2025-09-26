@@ -50,7 +50,6 @@
     button { font-size:15px; }
   }
 </style>
-
 </head>
 <body>
 
@@ -67,9 +66,10 @@
   <p class="footer">Powered by Invays &copy; 2025</p>
 </div>
 
-<!-- Firebase SDK + JS -->
+<!-- ✅ Firebase SDK (compat for GitHub Pages) -->
 <script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth-compat.js"></script>
+
 <script>
   // 🔑 Firebase config
   const firebaseConfig = {
@@ -78,7 +78,7 @@
     projectId: "inventorymanagement-e5c92"
   };
 
-  // Initialize
+  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
@@ -96,7 +96,8 @@
     }
 
     form.addEventListener('submit', (e) => {
-      e.preventDefault();
+      e.preventDefault(); // prevent page refresh
+
       const password = document.getElementById('new-password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
 
@@ -106,6 +107,13 @@
         return;
       }
 
+      if (password.length < 6) {
+        messageBox.textContent = "Password must be at least 6 characters.";
+        messageBox.style.color = "red";
+        return;
+      }
+
+      // ✅ Confirm password reset with Firebase
       auth.confirmPasswordReset(oobCode, password)
         .then(() => {
           messageBox.textContent = "Password reset successful! Redirecting to login...";
@@ -125,4 +133,3 @@
 
 </body>
 </html>
-
