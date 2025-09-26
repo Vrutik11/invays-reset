@@ -66,9 +66,9 @@
   <p class="footer">Powered by Invays &copy; 2025</p>
 </div>
 
-<!-- ✅ Firebase SDK (compat for GitHub Pages) -->
-<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth-compat.js"></script>
+<!-- ✅ Firebase v9 compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
 <script>
   // 🔑 Firebase config
@@ -96,7 +96,7 @@
     }
 
     form.addEventListener('submit', (e) => {
-      e.preventDefault(); // prevent page refresh
+      e.preventDefault();
 
       const password = document.getElementById('new-password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
@@ -113,7 +113,6 @@
         return;
       }
 
-      // ✅ Confirm password reset with Firebase
       auth.confirmPasswordReset(oobCode, password)
         .then(() => {
           messageBox.textContent = "Password reset successful! Redirecting to login...";
