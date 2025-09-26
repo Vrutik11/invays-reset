@@ -68,10 +68,9 @@
 </div>
 
 <!-- Firebase SDK + JS -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
-  import { getAuth, confirmPasswordReset } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
-
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth-compat.js"></script>
+<script>
   // 🔑 Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBylUVBalIo916IFWLfbfIUQb9EhY41pSs",
@@ -79,18 +78,16 @@
     projectId: "inventorymanagement-e5c92"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  // Initialize
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
   window.addEventListener('DOMContentLoaded', () => {
-    console.log("Reset page loaded"); // debug
-
     const urlParams = new URLSearchParams(window.location.search);
     const oobCode = urlParams.get('oobCode');
     const messageBox = document.getElementById('message');
     const form = document.getElementById('reset-form');
 
-    // Hide form if no code
     if (!oobCode) {
       messageBox.textContent = "Invalid or expired reset link. Please use the link from your email.";
       messageBox.style.color = "red";
@@ -98,12 +95,8 @@
       return;
     }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // prevent refresh
-      console.log("Form submitted"); // debug
-
-      messageBox.textContent = "";
-
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
       const password = document.getElementById('new-password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
 
@@ -113,29 +106,23 @@
         return;
       }
 
-      if (password.length < 6) {
-        messageBox.textContent = "Password must be at least 6 characters.";
-        messageBox.style.color = "red";
-        return;
-      }
-
-      try {
-        await confirmPasswordReset(auth, oobCode, password);
-        messageBox.textContent = "Password reset successful! Redirecting to login...";
-        messageBox.style.color = "green";
-
-        setTimeout(() => {
-          // replace with your login page URL
-          window.location.href = "https://vrutik11.github.io/invays-login/";
-        }, 2500);
-      } catch (error) {
-        console.error(error);
-        messageBox.textContent = error.message;
-        messageBox.style.color = "red";
-      }
+      auth.confirmPasswordReset(oobCode, password)
+        .then(() => {
+          messageBox.textContent = "Password reset successful! Redirecting to login...";
+          messageBox.style.color = "green";
+          setTimeout(() => {
+            window.location.href = "https://vrutik11.github.io/invays-login/";
+          }, 2500);
+        })
+        .catch((error) => {
+          console.error(error);
+          messageBox.textContent = error.message;
+          messageBox.style.color = "red";
+        });
     });
   });
 </script>
 
 </body>
 </html>
+
